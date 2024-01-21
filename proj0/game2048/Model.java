@@ -110,9 +110,196 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
+
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+
+        board.setViewingPerspective(side);
+        //CASE 1: 3 Empty Spaces ✅
+        //option1: upper row is null  ✅
+        //option2:  upper row is not null ✅
+
+        //CASE 2: 2 Empty Spaces ✅
+        //option1: upper row is null?✅
+        //      --> tiles can be merged? merge tiles and move them towards up ✅
+        //      --> tiles can't be merged? move tiles towards up without merging ✅
+        //option2: upper row is not null?✅
+        //      --> tiles can be merged? merge tiles ✅
+        //      --> tiles can't be merged? move tile towards up without merging ✅
+        //
+
+        //CASE 3: 1 Empty Space ✅
+        //Option1: upper row is null? ✅
+        //       --> 3 tiles with the same value ? ✅
+        //       -->
+        //       -->
+        //Option2: upper row is not null? ✅
+        //      --> 3 preceding tiles with same value? merge the upper two tiles into upper row  and move third one to up ✅
+        //      --> 2 preceding tiles with same value? merge them and move the other to top; ✅
+        //      --> no merge ? just move all up ✅
+
+
+        //CASE 4: 0 Empty Spaces ✅
+        //option 1: 2 adjacent tiles ✅
+        //option 2: only 1 adjacent tiles ✅
+        //option 3 : 0 zero adjacent tiles ✅ --> we do nothing here
+        for(int col=0;col< board.size();col++){
+
+            //CASE 1 -> Option 1
+            if(checkColEmptySpaces(board, col) == 3 && checkUpperRow(board, col)){
+                int rowIndex = gettingTileRowIndex(board,col);
+                Tile t = board.tile(col,rowIndex);
+                board.move(col,3,t);
+                changed = true;
+            };
+
+            //CASE 2 -> Option 1
+            if(checkColEmptySpaces(board, col) == 2 && checkUpperRow(board,col)){
+                int rowIndex = gettingTileRowIndex(board,col);
+                int nextRowIndex = gettingTileRowNextIndex(board,col,rowIndex);
+                Tile currTile = board.tile(col,rowIndex);
+                Tile nextTile = board.tile(col, nextRowIndex);
+                board.move(col,3, nextTile);
+                if(currTile.value() == nextTile.value()){
+                    board.move(col,3, currTile);
+                    score += board.tile(col,3).value();
+                }else {
+                    board.move(col,2, currTile);
+                }
+                changed = true;
+            }
+
+            //CASE 2 -> Option 2
+            if(checkColEmptySpaces(board,col) == 2 && !checkUpperRow(board,col)){
+                int rowIndex = gettingTileRowIndex(board,col);
+                Tile currTile = board.tile(col,rowIndex);
+                Tile nextTile = board.tile(col, 3);
+
+                if(currTile.value() == nextTile.value()){
+                    board.move(col, 3 ,currTile);
+                    score += board.tile(col, 3).value();
+                }else{
+                    board.move(col, 2 ,currTile);
+                }
+                changed = true;
+
+            }
+
+            //CASE 3 -> Option 1
+            if(checkColEmptySpaces(board,col) == 1 && checkUpperRow(board,col)){
+                int rowIndex = gettingTileRowIndex(board,col);
+                int nextRowIndex = gettingTileRowNextIndex(board,col, rowIndex);
+                Tile currTile = board.tile(col, rowIndex);
+                Tile nextTile = board.tile(col,nextRowIndex);
+                Tile upperTile = board.tile(col,2);
+
+                if(nextTile.value() == upperTile.value() && currTile.value() == nextTile.value()){
+                    board.move(col, 3,upperTile);
+                    board.move(col, 3,nextTile);
+                    board.move(col,2,currTile);
+                    score += board.tile(col,3).value();
+                }
+
+                if(currTile.value() == nextTile.value() && nextTile.value() != upperTile.value()) {
+                    board.move(col, 3, upperTile);
+                    board.move(col, 2 ,nextTile);
+                    board.move(col, 2, currTile);
+                    score += board.tile(col,2).value();
+                }
+
+                if(currTile.value() != nextTile.value() && nextTile.value() != upperTile.value()){
+                    board.move(col,3,upperTile);
+                    board.move(col, 2, nextTile);
+                    board.move(col,1, currTile);
+                }
+
+                changed = true;
+
+            }
+
+            //CASE 3 -> Option 2
+            if(checkColEmptySpaces(board,col) == 1 && !checkUpperRow(board,col)){
+                int rowIndex = gettingTileRowIndex(board,col);
+                int nextRowIndex = gettingTileRowNextIndex(board,col, rowIndex);
+                Tile currTile = board.tile(col, rowIndex);
+                Tile nextTile = board.tile(col,nextRowIndex);
+                Tile upperRowTile = board.tile(col,3);
+                if(nextTile.value() == upperRowTile.value()){
+                    board.move(col, 3, nextTile);
+                    board.move(col, 2, currTile);
+                    score += board.tile(col, 3).value();
+
+                } else if(nextTile.value() == currTile.value() && nextRowIndex == 2){
+                    board.move(col, 2,currTile);
+                    score += board.tile(col,2).value();
+                } else if (nextTile.value() == currTile.value() && nextRowIndex != 2){
+                    board.move(col, 2, nextTile);
+                    board.move(col, 2 ,currTile);
+                    score += board.tile(col, 2).value();
+                } else if (nextTile.value() != currTile.value() && nextTile.value() != upperRowTile.value()){
+                   if(nextRowIndex == 2){
+                       board.move(col,1, currTile);
+                   }else{
+                       board.move(col,2,nextTile);
+                       board.move(col,1,currTile);
+                   }
+                }
+                changed = true;
+            }
+
+            //CASE 4 -> Option 1
+            if(checkColEmptySpaces(board,col) == 0 && checkColAdjacents(board, col) == 2){
+                Tile currTile = board.tile(col,2);
+                board.move(col,3 , currTile);
+                score += board.tile(col,3).value();
+
+                currTile = board.tile(col, 1);
+                board.move(col,2 , currTile);
+
+                currTile = board.tile(col, 0);
+                board.move(col, 2 ,currTile);
+                score += board.tile(col, 2).value();
+
+                changed = true;
+            }
+
+            //CASE 4 -> Option 2
+            if(checkColEmptySpaces(board,col) == 0 && checkColAdjacents(board,col ) == 1){
+                int index = gettingAdjacentUpperTileRowIndex(board, col);
+                if(index == 3){
+                    Tile currTile = board.tile(col, 2);
+                    board.move(col, 3, currTile);
+                    score += board.tile(col, 3).value();
+
+                    currTile = board.tile(col, 1);
+                    board.move(col, 2,currTile);
+
+                    currTile = board.tile(col, 0);
+                    board.move(col, 1,currTile);
+
+                    changed = true;
+                }else if(index == 2){
+                    Tile currTile = board.tile(col, 1);
+                    board.move(col, 2 , currTile);
+                    score += board.tile(col, 2).value();
+
+                    currTile = board.tile(col, 0);
+                    board.move(col,1,currTile);
+                    changed = true;
+                } else if(index == 1){
+                    Tile currTile = board.tile(col, 0);
+                    board.move(col, 1, currTile);
+                    score += board.tile(col, 1).value();
+
+                    changed = true;
+                }
+            }
+
+        }
+
+
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
@@ -120,6 +307,80 @@ public class Model extends Observable {
         }
         return changed;
     }
+
+
+    private int gettingTileRowIndex(Board b, int col){
+        int rowIndex = 0;
+        for(int row = 0; row < b.size(); row++){
+            Tile t = b.tile(col,row);
+                if(t != null){
+                    rowIndex = row;
+                    break;
+                }
+        }
+        return rowIndex;
+    }
+
+    private int gettingTileRowNextIndex(Board b, int col, int start){
+        int nextRowIndex = 0;
+        for(int i = start + 1; i < b.size(); i++){
+            Tile t = b.tile(col,i);
+                if(t != null){
+                    nextRowIndex = i;
+                    break;
+                }
+        }
+        return nextRowIndex;
+    }
+
+    private int gettingAdjacentUpperTileRowIndex(Board b, int col){
+        int index = 0;
+        for(int row = 3; row > 0 ; row--){
+            Tile currTile = board.tile(col, row);
+            Tile adjacentTile = board.tile(col,row - 1);
+            if(currTile != null && adjacentTile != null && currTile.value() == adjacentTile.value()){
+                index = row;
+                break;
+            }
+        }
+        return index;
+    }
+
+    private boolean checkUpperRow(Board b, int col){
+        Tile t = b.tile(col,3);
+        boolean flag = false;
+        if (t == null){
+            flag = true;
+        }
+        return flag;
+    }
+
+    private int checkColEmptySpaces(Board b, int col){
+        int counter = 0;
+        for(int row = 0; row < b.size(); row++){
+            Tile tile = b.tile(col,row);
+            if(tile == null){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    private int checkColAdjacents(Board b,int col){
+        int counter = 0;
+        for(int row = 0; row < b.size()-1; row++){
+            Tile currTile = b.tile(col,row);
+            Tile nextTile = b.tile(col,row+1);
+            if(currTile != null && nextTile != null && currTile.value() == nextTile.value()){
+                counter++;
+                row++;
+            };
+        }
+
+        return counter;
+    }
+
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
