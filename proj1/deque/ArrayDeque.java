@@ -25,7 +25,7 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
         nextLast= 4;
     }
 
-    @Override
+
     public int size(){
         return size;
     }
@@ -50,7 +50,6 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
         nextLast = size;
     }
 
-    @Override
     public void addFirst(Item element){
         //resize should be done here before anything in case of the underlying array is full of items
         if(size() == items.length){
@@ -66,7 +65,7 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
         nextFirst = nextFirst - 1;
     }
 
-    @Override
+
     public Item getFirst(){
         int index = prevIndex(nextFirst);
         return items[index];
@@ -90,7 +89,6 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
         return prevIndex;
     }
 
-    @Override
     public Item removeFirst(){
 
         if(getFirst() == null){
@@ -109,7 +107,6 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
         return value;
     }
 
-    @Override
     public void addLast(Item element){
         //resize should be done here before anything in case of the underlying array is full of items
         if(size() == items.length){
@@ -125,12 +122,11 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
         nextLast = nextLast + 1;
     }
 
-    @Override
     public Item getLast(){
         return items[nextLast - 1];
     }
 
-    @Override
+
     public Item removeLast(){
         Item value = getLast();
         if(value == null){
@@ -152,14 +148,13 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
 
 
 
-    @Override
     public Item get(int index){
         int i = getFirstIndex();
         int length = items.length;
         return items[(i + index) % length];
     }
 
-    @Override
+
     public void printDeque(){
         int size = size();
         int i = 0;
@@ -219,6 +214,6 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
 
     public static void main(String[] args) {
         String x = "hello";
-        
+
     }
 }
