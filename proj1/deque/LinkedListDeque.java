@@ -6,9 +6,10 @@ package deque;
 
 import jh61b.junit.In;
 
+import java.util.Iterator;
 import java.util.List;
 
-public class LinkedListDeque<Item> {
+public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
     private  class Node{
         public Item item;
         public Node next;
@@ -41,25 +42,24 @@ public class LinkedListDeque<Item> {
         size = 1;
     }
 
+    @Override
     public int size(){
         return size;
     }
 
-    public boolean isEmpty(){
-        if (size() == 0) return true;
-        return false;
-    }
-
+    @Override
     public void addFirst(Item item){
         sentinel.next.prev = new Node(item, sentinel.next,sentinel);
         sentinel.next = sentinel.next.prev;
         size = size + 1;
     }
 
+    @Override
     public Item getFirst(){
         return sentinel.next.item;
     }
 
+    @Override
     public Item removeFirst(){
         if (isEmpty()){
             return null;
@@ -73,17 +73,20 @@ public class LinkedListDeque<Item> {
     }
 
 
+    @Override
     public void addLast(Item item){
         sentinel.prev.next = new Node(item, sentinel,sentinel.prev);
         sentinel.prev = sentinel.prev.next;
         size = size + 1;
     }
 
+    @Override
     public Item getLast(){
         return sentinel.prev.item;
     }
 
 
+    @Override
     public Item removeLast(){
         if(isEmpty()){
             return null;
@@ -94,6 +97,7 @@ public class LinkedListDeque<Item> {
         return item;
     }
 
+    @Override
     public Item get(int index){
         //fix it
         if (isEmpty()) return null;
@@ -106,8 +110,8 @@ public class LinkedListDeque<Item> {
         return pointer.item;
     };
 
+    @Override
     public void printDeque(){
-
         Node pointer = sentinel.next;
         while (pointer != sentinel){
             System.out.print(pointer.item + " ");
@@ -115,6 +119,54 @@ public class LinkedListDeque<Item> {
         }
         System.out.println();
     }
+
+    public Iterator<Item> iterator(){
+        return new LLDequeIterator();
+    }
+    private class LLDequeIterator implements Iterator<Item>{
+
+        private int index;
+        public LLDequeIterator(){
+            index = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return index < size;
+        }
+        @Override
+        public Item next() {
+            Item item = get(index);
+            index++;
+            return item;
+        }
+
+    }
+
+    @Override
+    public boolean equals(Object o){
+            int index = 0;
+            if(this == o){
+                return true;
+            }
+
+            if(o instanceof LinkedListDeque deque){
+                if(this.size != deque.size){
+                    return false;
+                }
+                for(Item x : this){
+                    Item y = (Item) deque.get(index);
+                    if(x != y){
+                        return false;
+                    }
+                    index += 1;
+                }
+                return true;
+            }
+
+        return false;
+        }
+
+
 
 
 
@@ -124,10 +176,19 @@ public class LinkedListDeque<Item> {
         list.addLast(10);
         list.addLast(10);
         list.addLast(10);
-        list.addLast(10);
+        list.addLast(20);
         list.addLast(20);
         list.addLast(10);
-        list.get(8);
+        LinkedListDeque<Integer> list2 = new LinkedListDeque<>();
+        list2.addLast(10);
+        list2.addLast(10);
+        list2.addLast(10);
+        list2.addLast(10);
+        list2.addLast(10);
+        list2.addLast(20);
+        list2.addLast(10);
+        System.out.println(list.equals(list2));
+
 
     }
 }
