@@ -162,22 +162,23 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
                 return true;
             }
 
-        if (!(o instanceof LinkedListDeque deque)) {
-            return false;
-        }
-        if(this.size != deque.size){
-            return false;
-        }
-        for(Item x : this){
-            Item y = (Item) deque.get(index);
-            if(x != y){
-                return false;
+            if(o instanceof LinkedListDeque){
+                LinkedListDeque deque = (LinkedListDeque) o;
+                if(this.size != deque.size){
+                    return false;
+                }
+                for(Item x : this){
+                    Item y = (Item) deque.get(index);
+                    if(x != y){
+                        return false;
+                    }
+                    index += 1;
+                }
+                return true;
             }
-            index += 1;
-        }
-        return true;
 
-    }
+        return false;
+        }
 
 
 
