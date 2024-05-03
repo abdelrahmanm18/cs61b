@@ -195,21 +195,21 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item> {
             return true;
         }
 
-        if(o instanceof ArrayDeque deque){
-            if(this.size != deque.size){
+        if (!(o instanceof ArrayDeque deque)) {
+            return false;
+        }
+        if(this.size != deque.size){
+            return false;
+        }
+
+        for(Item x : this){
+            Item y = (Item) deque.get(index);
+            if(y != x){
                 return false;
             }
-
-            for(Item x : this){
-                Item y = (Item) deque.get(index);
-                if(y != x){
-                    return false;
-                }
-                index += 1;
-            }
-            return true;
+            index += 1;
         }
-        return false;
+        return true;
     }
 
     public static void main(String[] args) {
