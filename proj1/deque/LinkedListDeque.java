@@ -4,10 +4,9 @@ package deque;
 *circular version of the DoublyLinkedList
 * */
 
-import jh61b.junit.In;
 
 import java.util.Iterator;
-import java.util.List;
+
 
 public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
     private  class Node{
@@ -106,7 +105,23 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
             counter++;
         }
         return pointer.item;
-    };
+    }
+
+    public Item getRecursive(int index){
+        if(isEmpty()) return null;
+        Node pointer = sentinel.next;
+        return getRecursiveHelper(index,  0, pointer);
+    }
+
+    private Item getRecursiveHelper(int index, int counter, Node pointer){
+        // base case when I reach the index that I actually want
+        if(index == counter){
+            return pointer.item;
+        }else{
+            pointer = pointer.next;
+            return getRecursiveHelper(index, ++counter ,pointer);
+        }
+    }
 
 
     public void printDeque(){
@@ -171,22 +186,13 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
     public static void main(String[] args) {
         LinkedListDeque<Integer> list = new LinkedListDeque<>();
         list.addLast(10);
-        list.addLast(10);
-        list.addLast(10);
-        list.addLast(10);
         list.addLast(20);
-        list.addLast(20);
+        list.addLast(30);
+        list.addLast(40);
+        list.addLast(50);
+        list.addLast(60);
         list.addLast(10);
-        LinkedListDeque<Integer> list2 = new LinkedListDeque<>();
-        list2.addLast(10);
-        list2.addLast(10);
-        list2.addLast(10);
-        list2.addLast(10);
-        list2.addLast(10);
-        list2.addLast(20);
-        list2.addLast(10);
-        System.out.println(list.equals(list2));
-
+        System.out.println(list.getRecursive(2));
 
     }
 }
